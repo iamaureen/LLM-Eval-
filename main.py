@@ -1,5 +1,6 @@
 from config import TEST_LLMs_API_ACCESS_TOKEN, TEST_LLMs_REST_API_URL
 from ASUllmAPI import ModelConfig, query_llm
+from input_processing import read_questions_from_data
 
 
 def execute_single_query(model_name, user_query):
@@ -10,6 +11,15 @@ def execute_single_query(model_name, user_query):
 
 
 if __name__ == '__main__':
+    # Load 20 questions from the data file
+    questions = read_questions_from_data(20)
+    
+    if not questions:
+        print("No questions loaded. Exiting.")
+        exit(1)
+    
+    print(f"Loaded {len(questions)} questions for LLM evaluation")
+    
     # define the model
     rag_model = ModelConfig(project_id="bfe0772659f1497787895fbb5d1eb622",
                         access_token=TEST_LLMs_API_ACCESS_TOKEN,
@@ -22,8 +32,9 @@ if __name__ == '__main__':
                         search_prompt_mode= None,
                         rerank=None)
 
-
-    query = "How many assignments are there?"
-    response_text = execute_single_query(rag_model, query)
-
-    print(response_text)
+    # Example: Process the first question
+    if questions:
+        first_question = questions[0]
+        print(f"\nProcessing first question: {first_question}")
+        response_text = execute_single_query(rag_model, first_question)
+        print(f"Response: {response_text}")
